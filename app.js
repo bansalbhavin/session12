@@ -1,27 +1,15 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var port = 8080;
+
+app.use(bodyParser.json());
 
 /**
 Main todos array
 */
-var todos = [
-	{
-		id:1,
-		description: "This is sample todo.",
-		completed:false
-	},
-	{
-		id:2,
-		description: "Need to go mithakali.",
-		completed:false
-	},
-	{
-		id:3,
-		description: "Need to go home.",
-		completed: true
-	}
-];
+var todos = [];
+var todosIndex = 1;
 
 app.get('/', function(req, res){
 	res.send("Todos API");
@@ -55,8 +43,17 @@ app.get('/getTodos/:id', function(req, res){
 	}
 });
 
-app.get('/addTodo', function(req, res){
-	res.send("Add API");
+app.post('/todos', function(req, res){
+	
+	var body = req.body;
+	body.id = todosIndex ++;
+
+	if(typeof body !== 'undefined'){
+		todos.push(body);
+		res.send("Todo added successfully.")
+	} else {
+		res.status(404).send("Missing required data!");
+	}
 });
 
 app.get('/editTodo', function(req, res){
